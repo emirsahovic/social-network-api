@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import colors from 'colors';
 import { connectDB } from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import profileRoutes from './routes/profileRoutes.js';
 import { errorHandler } from './middleware/errorMiddleware.js';
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/users', userRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.use(errorHandler);
 
