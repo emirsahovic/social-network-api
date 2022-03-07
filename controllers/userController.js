@@ -3,6 +3,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
+// @desc    Register user
+// @method  POST /api/users/register
+// @access  Public
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -26,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (user) {
-        return res.status(201).json({
+        res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email
@@ -34,5 +37,31 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 })
 
+// @desc    Login user
+// @method  POST /api/users/login
+// @access  Public
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
 
-export { registerUser }
+    if (!email || !password) {
+        return res.status(400).json({ msg: 'Please provide an email and password' });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res.status(400).json({ msg: 'Invalid credentials' });
+    }
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email
+        })
+    } else {
+        return res.status(400).json({ msg: 'Invalid credentials' });
+    }
+})
+
+export { registerUser, loginUser }
