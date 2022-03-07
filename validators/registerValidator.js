@@ -1,6 +1,6 @@
 import { check, validationResult } from 'express-validator';
 
-const validateUser = [
+const registerValidateUser = [
     check('name')
         .trim()
         .escape()
@@ -32,4 +32,4 @@ const validateUser = [
     },
 ];
 
-export { validateUser }
+export { registerValidateUser }
