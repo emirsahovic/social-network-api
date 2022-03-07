@@ -51,4 +51,13 @@ const createProfile = asyncHandler(async (req, res, next) => {
     res.json(profile);
 })
 
-export { createProfile }
+// @desc    Get all profiles
+// @method  GET /api/profile
+// @access  Public
+const getProfiles = asyncHandler(async (req, res, next) => {
+    const profiles = await Profile.find().populate('user', ['name', 'email']);
+
+    res.status(200).json(profiles);
+})
+
+export { createProfile, getProfiles }
