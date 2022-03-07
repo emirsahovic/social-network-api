@@ -25,7 +25,8 @@ const validateUser = [
         if (!errors.isEmpty()) {
             const err = errors.array().map(err => err.msg);
             const msg = err[0];
-            return res.status(422).json({ msg });
+            res.status(422);
+            throw new Error(msg);
         }
         next();
     },

@@ -6,17 +6,19 @@ import User from '../models/userModel.js';
 // @desc    Register user
 // @method  POST /api/users/register
 // @access  Public
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res, next) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-        return res.status(400).json({ msg: 'Please provide name, email and password' });
+        res.status(400);
+        throw new Error('Please provide name, email and password');
     }
 
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-        return res.status(400).json({ msg: 'User already exists' });
+        res.status(400);
+        throw new Error('User already exists');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -40,17 +42,19 @@ const registerUser = asyncHandler(async (req, res) => {
 // @desc    Login user
 // @method  POST /api/users/login
 // @access  Public
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ msg: 'Please provide an email and password' });
+        res.status(400);
+        throw new Error('Please provide an email and password');
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.status(400).json({ msg: 'Invalid credentials' });
+        res.status(400);
+        throw new Error('Invalid credentials');
     }
 
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -60,7 +64,8 @@ const loginUser = asyncHandler(async (req, res) => {
             email: user.email
         })
     } else {
-        return res.status(400).json({ msg: 'Invalid credentials' });
+        res.status(400);
+        throw new Error('Invalid credentials');
     }
 })
 

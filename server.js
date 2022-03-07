@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import colors from 'colors';
 import { connectDB } from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import { errorHandler } from './middleware/errorMiddleware.js';
 dotenv.config();
 
 const app = express();
@@ -19,5 +20,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/users', userRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`.yellow.bold));
