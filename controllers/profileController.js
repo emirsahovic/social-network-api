@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Profile from '../models/profileModel.js';
+import User from '../models/userModel.js';
 
 // @desc    Create or update profile
 // @method  POST /api/profile
@@ -88,4 +89,14 @@ const getProfileByUser = asyncHandler(async (req, res, next) => {
     res.status(200).json(profile);
 })
 
-export { createProfile, getProfiles, getProfile, getProfileByUser }
+// @desc    Delete profile and user
+// @method  DELETE /api/profile
+// @access  Private
+const deleteProfile = asyncHandler(async (req, res, next) => {
+    await Profile.findOneAndDelete({ user: req.user.id });
+    await User.findOneAndDelete({ _id: req.user.id });
+
+    res.status(200).json({ msg: 'Profile and user deleted' });
+})
+
+export { createProfile, getProfiles, getProfile, getProfileByUser, deleteProfile }
