@@ -114,7 +114,7 @@ const likePost = asyncHandler(async (req, res, next) => {
 
     await post.save();
 
-    res.json(post.likes);
+    res.status(200).json(post.likes);
 })
 
 // @route PUT api/posts/unlike/:postId
@@ -138,7 +138,7 @@ const unlikePost = asyncHandler(async (req, res, next) => {
 
     await post.save();
 
-    res.json(post.likes);
+    res.status(200).json(post.likes);
 })
 
 // @route POST api/posts/comment/:postId
@@ -155,6 +155,11 @@ const addComment = asyncHandler(async (req, res, next) => {
         throw new Error('Please provide text');
     }
 
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+
     const newComment = {
         text,
         name: user.name,
@@ -162,6 +167,38 @@ const addComment = asyncHandler(async (req, res, next) => {
     };
 
     post.comments.unshift(newComment);
+
+    await post.save();
+
+    res.status(200).json(post.comments);
+})
+
+// @route DELETE api/posts/comment/:postId/:commentId
+// @desc Delete comment
+// @access Private
+const deleteComment = asyncHandler(async (req, res, next) => {
+    const post = await Post.findById(req.params.postId);
+
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+
+    const comment = post.comments.find(comment => comment.id === req.params.commentId);
+
+    if (!comment) {
+        res.status(404);
+        throw new Error('Comment does not exist');
+    }
+
+    if (comment.user.toString() !== req.user.id) {
+        res.status(401);
+        throw new Error('User not authorized');
+    }
+
+    const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
+
+    post.comments.splice(removeIndex, 1);
 
     await post.save();
 
@@ -177,5 +214,6 @@ export {
     updatePost,
     likePost,
     unlikePost,
-    addComment
+    addComment,
+    deleteComment
 }
