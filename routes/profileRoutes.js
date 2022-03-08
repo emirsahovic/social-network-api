@@ -1,10 +1,11 @@
 import express from "express";
 import { protect } from '../middleware/authMiddleware.js';
-import { createProfile, getProfiles } from "../controllers/profileController.js";
+import { createProfile, getProfile, getProfiles } from "../controllers/profileController.js";
 
 const router = express.Router();
 
 router.post('/', protect, createProfile);
 router.get('/', getProfiles);
+router.get('/me', protect, getProfile);
 
 export default router;

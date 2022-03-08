@@ -60,4 +60,18 @@ const getProfiles = asyncHandler(async (req, res, next) => {
     res.status(200).json(profiles);
 })
 
-export { createProfile, getProfiles }
+// @desc    Get current users profile
+// @method  GET /api/profile/me
+// @access  Private
+const getProfile = asyncHandler(async (req, res, next) => {
+    const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'email']);
+
+    if (!profile) {
+        res.status(400);
+        throw new Error('Profile not found');
+    }
+
+    res.status(200).json(profile);
+})
+
+export { createProfile, getProfiles, getProfile }
