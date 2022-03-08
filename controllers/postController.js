@@ -74,4 +74,25 @@ const deletePost = asyncHandler(async (req, res, next) => {
     res.status(200).json({ msg: 'Post deleted' });
 })
 
-export { createPost, getPosts, getUserPosts, getPostById, deletePost }
+// @route PUT api/posts/:postId
+// @desc Update post
+// @access Private
+const updatePost = asyncHandler(async (req, res, next) => {
+    const post = await Post.findById(req.params.postId);
+
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+
+    if (post.user.toString() !== req.user.id) {
+        res.status(401);
+        throw new Error('User not authorized');
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(req.params.postId, req.body, { new: true });
+
+    res.status(200).json(updatedPost);
+})
+
+export { createPost, getPosts, getUserPosts, getPostById, deletePost, updatePost }
