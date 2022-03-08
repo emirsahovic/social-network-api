@@ -117,6 +117,30 @@ const likePost = asyncHandler(async (req, res, next) => {
     res.json(post.likes);
 })
 
+// @route PUT api/posts/unlike/:postId
+// @desc Unike a post
+// @access Private
+const unlikePost = asyncHandler(async (req, res, next) => {
+    const post = await Post.findById(req.params.postId);
+
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+
+    if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+        return res.status(400).json({ msg: 'Post has not yet been liked' });
+    }
+
+    const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
+
+    post.likes.splice(removeIndex, 1);
+
+    await post.save();
+
+    res.json(post.likes);
+})
+
 
 export {
     createPost,
@@ -125,5 +149,6 @@ export {
     getPostById,
     deletePost,
     updatePost,
-    likePost
+    likePost,
+    unlikePost
 }
