@@ -135,11 +135,32 @@ const addExperience = asyncHandler(async (req, res, next) => {
     res.json(profile);
 })
 
+// @desc    Delete profile experience
+// @method  DELETE /api/profile/experience/:expId
+// @access  Private
+const deleteExperience = asyncHandler(async (req, res, next) => {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    if (!profile) {
+        res.status(400);
+        throw new Error('Profile not found');
+    }
+
+    const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.expId);
+
+    profile.experience.splice(removeIndex, 1);
+
+    await profile.save();
+
+    res.json(profile);
+})
+
 export {
     createProfile,
     getProfiles,
     getProfile,
     getProfileByUser,
     deleteProfile,
-    addExperience
+    addExperience,
+    deleteExperience
 }

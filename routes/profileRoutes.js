@@ -6,7 +6,8 @@ import {
     getProfiles,
     getProfileByUser,
     deleteProfile,
-    addExperience
+    addExperience,
+    deleteExperience
 } from "../controllers/profileController.js";
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get('/me', protect, getProfile);
 router.get('/user/:userId', getProfileByUser);
 router.delete('/', protect, deleteProfile);
 router.put('/experience', protect, addExperience);
+router.delete('/experience/:expId', protect, deleteExperience);
 
 export default router;
