@@ -8,7 +8,8 @@ import {
     deleteProfile,
     addExperience,
     deleteExperience,
-    addEducation
+    addEducation,
+    deleteEducation
 } from "../controllers/profileController.js";
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.delete('/', protect, deleteProfile);
 router.put('/experience', protect, addExperience);
 router.delete('/experience/:expId', protect, deleteExperience);
 router.put('/education', protect, addEducation);
+router.delete('/education/:eduId', protect, deleteEducation);
 
 export default router;
