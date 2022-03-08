@@ -31,5 +31,12 @@ const getPosts = asyncHandler(async (req, res, next) => {
     res.status(200).json(posts);
 })
 
+// @route GET api/posts/me
+// @desc Get current user posts
+// @access Private
+const getUserPosts = asyncHandler(async (req, res, next) => {
+    const posts = await Post.find({ user: req.user.id });
+    res.status(200).json(posts);
+})
 
-export { createPost, getPosts }
+export { createPost, getPosts, getUserPosts }
