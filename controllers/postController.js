@@ -141,6 +141,32 @@ const unlikePost = asyncHandler(async (req, res, next) => {
     res.json(post.likes);
 })
 
+// @route POST api/posts/comment/:postId
+// @desc Comment on a post
+// @access Private
+const addComment = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id).select('-password');
+    const post = await Post.findById(req.params.postId);
+
+    const { text } = req.body;
+
+    if (!text) {
+        res.status(400);
+        throw new Error('Please provide text');
+    }
+
+    const newComment = {
+        text,
+        name: user.name,
+        user: req.user.id
+    };
+
+    post.comments.unshift(newComment);
+
+    await post.save();
+
+    res.json(post.comments);
+})
 
 export {
     createPost,
@@ -150,5 +176,6 @@ export {
     deletePost,
     updatePost,
     likePost,
-    unlikePost
+    unlikePost,
+    addComment
 }
