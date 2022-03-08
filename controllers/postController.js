@@ -23,4 +23,13 @@ const createPost = asyncHandler(async (req, res, next) => {
     res.status(201).json(post);
 })
 
-export { createPost }
+// @route GET api/posts
+// @desc Get all posts
+// @access Public
+const getPosts = asyncHandler(async (req, res, next) => {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.status(200).json(posts);
+})
+
+
+export { createPost, getPosts }
