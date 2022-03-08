@@ -53,4 +53,25 @@ const getPostById = asyncHandler(async (req, res, next) => {
     res.status(200).json(post);
 })
 
-export { createPost, getPosts, getUserPosts, getPostById }
+// @route DELETE api/posts/:postId
+// @desc Delete post
+// @access Private
+const deletePost = asyncHandler(async (req, res, next) => {
+    const post = await Post.findById(req.params.postId);
+
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+
+    if (post.user.toString() !== req.user.id) {
+        res.status(401);
+        throw new Error('User not authorized');
+    }
+
+    await post.remove();
+
+    res.status(200).json({ msg: 'Post deleted' });
+})
+
+export { createPost, getPosts, getUserPosts, getPostById, deletePost }
