@@ -99,4 +99,47 @@ const deleteProfile = asyncHandler(async (req, res, next) => {
     res.status(200).json({ msg: 'Profile and user deleted' });
 })
 
-export { createProfile, getProfiles, getProfile, getProfileByUser, deleteProfile }
+// @desc    Add profile experience
+// @method  PUT /api/profile/experience
+// @access  Private
+const addExperience = asyncHandler(async (req, res, next) => {
+    const {
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    } = req.body;
+
+    if (!title || !company || !from) {
+        res.status(400);
+        throw new Error('Please provide title, company and from date');
+    }
+
+    const exp = {
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    };
+
+    const profile = await Profile.findOne({ user: req.user.id });
+    profile.experience.unshift(exp);
+
+    await profile.save();
+    res.json(profile);
+})
+
+export {
+    createProfile,
+    getProfiles,
+    getProfile,
+    getProfileByUser,
+    deleteProfile,
+    addExperience
+}
